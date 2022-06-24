@@ -42,6 +42,16 @@ router.post("/", ensureLoggedIn, async function(req, res, next) {
   }
 });
 
+router.post("/:username/jobs/:id", async (req, res, next) => {
+  try {
+    const { username, id } = req.params;
+    await User.apply(username, id);
+    return res.json({ applied: id });
+  } catch (err) {
+    return next(err);
+  }
+});
+
 /** GET / => { users: [ {username, firstName, lastName, email }, ... ] }
  *
  * Returns list of all users.
@@ -91,7 +101,6 @@ router.patch("/:username", ensureLoggedIn, async function(req, res, next) {
       const errs = validator.errors.map(e => e.stack);
       throw new BadRequestError(errs);
     }
-    console.log(req.body);
     const user = await User.update(req.params.username, req.body);
     return res.json({ user });
   } catch (err) {

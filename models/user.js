@@ -36,7 +36,6 @@ class User {
     );
 
     const user = result.rows[0];
-    console.log(user, `***USER***`);
     if (user) {
       // compare hashed password to a new hash from password
       const isValid = await bcrypt.compare(password, user.password);
@@ -139,6 +138,10 @@ class User {
     if (!user) throw new NotFoundError(`No user: ${username}`);
 
     return user;
+  }
+
+  static async apply(user, jobId) {
+    await db.query(`INSERT INTO applications VALUES ($1, $2)`, [ user, jobId ]);
   }
 
   /** Update user data with `data`.
